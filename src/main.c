@@ -13,7 +13,7 @@
 
 #define TOP_LED    0
 #define DEAD_ZONE  180
-#define SAVE_THRESHOLD 200
+#define SAVE_THRESHOLD 500
 
 uint16_t response;
 int32_t X_g, Y_g, Z_g;

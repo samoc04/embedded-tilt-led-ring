@@ -12,11 +12,9 @@ This project implements a tilt-controlled LED ring system using an STM32L432 mic
 
 
 
-The project demonstrates low-level embedded programming, peripheral interfacing, real-time signal processing, and debugging techniques.
+The project demonstrates embedded programming, peripheral interfacing, real-time signal processing, and debugging techniques.
 
 
-
-\---
 
 
 
@@ -44,11 +42,9 @@ The objectives of this project were:
 
 
 
-\---
 
 
-
-## System Description
+### System Description
 
 
 
@@ -154,37 +150,37 @@ The system was developed incrementally, testing each subsystem before integratio
 
 
 
-#### \### Stage 1: WS2812 LED Control
+#### Stage 1: WS2812 LED Control
 
 Initial implementation used SPI but produced unstable results. This was replaced with direct GPIO control using the DWT cycle counter for precise timing.
 
 
 
-#### \### Stage 2: LED Mapping
+#### Stage 2: LED Mapping
 
 Individual LED control was verified. Issues with indexing and colour inconsistencies were resolved.
 
 
 
-#### \### Stage 3: I2C Sensor Integration
+#### Stage 3: I2C Sensor Integration
 
 The BMI160 was interfaced via I2C. Raw acceleration values were read and scaled correctly.
 
 
 
-#### \### Stage 4: Basic Tilt Detection
+#### Stage 4: Basic Tilt Detection
 
 Single-axis tilt was mapped to LED colour output to verify system behaviour.
 
 
 
-#### \### Stage 5: Multi-Axis Processing
+#### Stage 5: Multi-Axis Processing
 
 Both X and Y axes were used to detect direction. A dominant-axis method avoided conflicting outputs.
 
 
 
-#### \### Stage 6: Direction Mapping
+#### Stage 6: Direction Mapping
 
 Tilt direction was mapped to LED positions using a dot-product method with predefined vectors.
 
@@ -268,23 +264,33 @@ A combination of debugging techniques was used:
 
 
 
-#### \### Software Debugging
+#### Software Debugging
 
-\- UART used to print sensor and system values
+\- UART was used to print raw and filtered accelerometer values
 
-
-
-#### \### Ad-hoc Debugging
-
-\- LEDs used as visual indicators
-
-\- GPIO toggling used to observe timing behaviour
-
-\- Incremental testing used to isolate issues
+\- This verified correct I2C communication and data scaling
 
 
 
-\---
+#### Ad-hoc Debugging
+
+\- LEDs were used to visualise system state and direction mapping
+
+\- GPIO toggling was used to verify timing accuracy of WS2812 signals
+
+\- Step-by-step subsystem testing was used to isolate faults
+
+
+
+#### Hardware Debugging
+
+
+
+\- An oscilloscope was used to verify the WS2812 data signal
+
+\- The waveform at the data pin was observed to confirm correct pulse timing and signal presence
+
+\- This helped identify issues with the initial communication method and confirmed correct operation after implementing precise timing control
 
 
 
@@ -292,7 +298,7 @@ A combination of debugging techniques was used:
 
 
 
-A schematic was created using \[KiCad / Fritzing].
+A schematic was created using KiCad.
 
 
 
@@ -308,7 +314,7 @@ Connections include:
 
 
 
-\---
+\[View Schematic PDF](Circuit\_schematic.pdf)
 
 
 
@@ -340,7 +346,7 @@ The system is responsive, stable, and meets all project objectives.
 
 
 
-\[Insert YouTube link here]
+https://youtu.be/A2sVNCb3\_ys
 
 
 
