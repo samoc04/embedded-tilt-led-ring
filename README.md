@@ -1,14 +1,10 @@
-# embedded-tilt-led-ring
+# Embedded-tilt-led-ring
 
 STM32 embedded system using accelerometer, ADC, PWM and WS2812 LED ring
 
 
 
-\# Embedded Tilt-Controlled LED Ring System
-
-
-
-\## Overview
+### Overview
 
 
 
@@ -24,7 +20,7 @@ The project demonstrates low-level embedded programming, peripheral interfacing,
 
 
 
-\## Objectives
+### Objectives
 
 
 
@@ -52,7 +48,7 @@ The objectives of this project were:
 
 
 
-\## System Description
+## System Description
 
 
 
@@ -78,7 +74,7 @@ Key features:
 
 
 
-\## Hardware Used
+### Hardware Used
 
 
 
@@ -100,7 +96,7 @@ Key features:
 
 
 
-\## Peripherals Used (LO1)
+### Peripherals Used (LO1)
 
 
 
@@ -124,7 +120,7 @@ Key features:
 
 
 
-\## Software Design
+### Software Design
 
 
 
@@ -150,7 +146,7 @@ A low-level register-based approach was used instead of full HAL abstraction.
 
 
 
-\## Software Development Procedure (LO5)
+### Software Development Procedure (LO5)
 
 
 
@@ -158,43 +154,43 @@ The system was developed incrementally, testing each subsystem before integratio
 
 
 
-\### Stage 1: WS2812 LED Control
+#### \### Stage 1: WS2812 LED Control
 
 Initial implementation used SPI but produced unstable results. This was replaced with direct GPIO control using the DWT cycle counter for precise timing.
 
 
 
-\### Stage 2: LED Mapping
+#### \### Stage 2: LED Mapping
 
 Individual LED control was verified. Issues with indexing and colour inconsistencies were resolved.
 
 
 
-\### Stage 3: I2C Sensor Integration
+#### \### Stage 3: I2C Sensor Integration
 
 The BMI160 was interfaced via I2C. Raw acceleration values were read and scaled correctly.
 
 
 
-\### Stage 4: Basic Tilt Detection
+#### \### Stage 4: Basic Tilt Detection
 
 Single-axis tilt was mapped to LED colour output to verify system behaviour.
 
 
 
-\### Stage 5: Multi-Axis Processing
+#### \### Stage 5: Multi-Axis Processing
 
 Both X and Y axes were used to detect direction. A dominant-axis method avoided conflicting outputs.
 
 
 
-\### Stage 6: Direction Mapping
+#### \### Stage 6: Direction Mapping
 
 Tilt direction was mapped to LED positions using a dot-product method with predefined vectors.
 
 
 
-\### Stage 7: Filtering
+#### Stage 7: Filtering
 
 A low-pass filter was applied to reduce noise and stabilise the output.
 
@@ -204,7 +200,7 @@ A low-pass filter was applied to reduce noise and stabilise the output.
 
 
 
-\## Testing and Results (LO4)
+### Testing and Results (LO4)
 
 
 
@@ -212,7 +208,7 @@ Each subsystem was tested individually.
 
 
 
-\### Test 1: LED Communication
+#### Test 1: LED Communication
 
 \- Method: Illuminate LEDs sequentially
 
@@ -220,7 +216,7 @@ Each subsystem was tested individually.
 
 
 
-\### Test 2: LED Indexing
+#### Test 2: LED Indexing
 
 \- Method: Activate each LED individually
 
@@ -228,7 +224,7 @@ Each subsystem was tested individually.
 
 
 
-\### Test 3: I2C Communication
+#### Test 3: I2C Communication
 
 \- Method: Read sensor data via UART
 
@@ -236,7 +232,7 @@ Each subsystem was tested individually.
 
 
 
-\### Test 4: Tilt Detection
+#### Test 4: Tilt Detection
 
 \- Method: Manual tilting
 
@@ -244,7 +240,7 @@ Each subsystem was tested individually.
 
 
 
-\### Test 5: Direction Mapping
+#### Test 5: Direction Mapping
 
 \- Method: Rotate device through 360°
 
@@ -252,7 +248,7 @@ Each subsystem was tested individually.
 
 
 
-\### Test 6: Filtering
+#### Test 6: Filtering
 
 \- Method: Compare filtered vs raw signals
 
@@ -264,7 +260,7 @@ Each subsystem was tested individually.
 
 
 
-\## Debugging Methods
+### Debugging Methods
 
 
 
@@ -272,13 +268,13 @@ A combination of debugging techniques was used:
 
 
 
-\### Software Debugging
+#### \### Software Debugging
 
 \- UART used to print sensor and system values
 
 
 
-\### Ad-hoc Debugging
+#### \### Ad-hoc Debugging
 
 \- LEDs used as visual indicators
 
@@ -292,7 +288,7 @@ A combination of debugging techniques was used:
 
 
 
-\## Circuit Design
+### Circuit Design
 
 
 
@@ -316,7 +312,7 @@ Connections include:
 
 
 
-\## Results Summary
+### Results Summary
 
 
 
@@ -340,7 +336,7 @@ The system is responsive, stable, and meets all project objectives.
 
 
 
-\## Video Demonstration
+#### Video Demonstration
 
 
 
@@ -351,8 +347,6 @@ The system is responsive, stable, and meets all project objectives.
 \---
 
 
-
-\## Repository Structure
 
 
 
