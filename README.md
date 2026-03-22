@@ -308,7 +308,7 @@ Connections include:
 
 
 
-\[View Schematic PDF](Circuit schematic.pdf)
+\[View Schematic PDF](Circuit\_schematic.pdf)
 
 
 
