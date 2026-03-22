@@ -338,9 +338,3 @@ The system is responsive, stable, and meets all project objectives.
 
 https://youtu.be/A2sVNCb3\_ys
 
-
-
-
-
-
-
