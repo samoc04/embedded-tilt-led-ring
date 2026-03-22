@@ -292,7 +292,7 @@ Connections include:
 
 A more detailed record of code development, debugging, and testing is available here:
 
-[View Full Development Log](Development_Log.docx)
+[View Full Development Log](test_log.pdf)
 
 ---
 
