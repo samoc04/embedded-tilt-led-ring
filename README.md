@@ -2,345 +2,331 @@
 
 STM32 embedded system using accelerometer, ADC, PWM and WS2812 LED ring
 
+![Working Project](working_project.jpeg)
 
-
-### Overview
-
-
+## Overview
 
 This project implements a tilt-controlled LED ring system using an STM32L432 microcontroller and a BMI160 accelerometer. The system detects the orientation of the device in real time and displays the direction using a WS2812B LED ring.
 
+The project demonstrates embedded programming, peripheral interfacing, real-time signal processing, debugging, and iterative system development.
 
+---
 
-The project demonstrates embedded programming, peripheral interfacing, real-time signal processing, and debugging techniques.
-
-
-
-
-
-### Objectives
-
-
+## Objectives
 
 The objectives of this project were:
 
+- Interface with an accelerometer using I2C
+- Control a WS2812B LED ring using precise timing
+- Implement real-time tilt detection
+- Map tilt direction to LED position
+- Implement filtering for stable output
+- Demonstrate use of ADC and timer-related timing control
+- Apply structured testing and debugging methods
 
+---
 
-\- Interface with an accelerometer using I2C
+## System Description
 
-\- Control a WS2812B LED ring using precise timing
+The system reads acceleration data from the BMI160 sensor and calculates the direction of tilt using the X and Y axes. This direction is mapped onto a 16-LED WS2812B ring.
 
-\- Implement real-time tilt detection
+### Key features
 
-\- Map direction to LED position
+- A 3-LED pointer indicates tilt direction
+- A dead zone prevents jitter when the device is stationary
+- A potentiometer allows a position to be saved
+- A push button cycles through colour modes
+- Saved positions remain visible while live tracking continues
+- Filtering improves stability and smoothness of movement
 
-\- Implement filtering for stable output
+---
 
-\- Demonstrate use of ADC and Timer peripherals
+## Hardware Used
 
-\- Apply structured testing and debugging methods
+- STM32L432 Nucleo board
+- BMI160 accelerometer
+- WS2812B 16-LED ring
+- Potentiometer
+- Push button
+- 330 Ω resistor on LED data line
+- Breadboard and jumper wires
+- Oscilloscope for signal debugging
 
+---
 
+## Peripherals Used (LO1)
 
+| Peripheral | Purpose |
+|---|---|
+| GPIO | LED data output, button input |
+| I2C | Communication with BMI160 accelerometer |
+| ADC | Read potentiometer value |
+| Timer / precise timing | WS2812 signal timing and control |
+| UART | Debug output to serial terminal |
 
+---
 
-### System Description
+## Software Design
 
+The software was structured into modular functions for:
 
+- sensor reading using I2C
+- signal processing and filtering
+- LED control using the WS2812 protocol
+- button input handling
+- potentiometer input handling
+- tilt-to-direction mapping
 
-The system reads acceleration data from the BMI160 sensor and calculates the direction of tilt using the X and Y axes. This direction is mapped onto a 16-LED ring.
+A low-level register-based approach was used rather than relying fully on HAL libraries. This gave finer control over timing, which was especially important for the WS2812 LED protocol.
 
+---
 
+## How the Final System Works
 
-Key features:
+The BMI160 accelerometer provides raw X, Y, and Z acceleration values. The software reads these values over I2C and scales them into usable values. The X and Y axes are then used to determine the tilt direction.
 
-\- A 3-LED pointer indicates tilt direction
+A mapping algorithm compares the measured direction against predefined direction vectors for each LED position on the ring. The best matching LED becomes the centre LED of a 3-LED pointer. This makes the output easy to see and more visually stable than lighting only one LED.
 
-\- A dead zone prevents jitter when stationary
+A dead zone is applied so that when the board is close to flat, the pointer stays in a default top position instead of jittering. A low-pass filter is also used to smooth the accelerometer values and reduce noise.
 
-\- A potentiometer allows saving a position
+The potentiometer is used as a user input to save a position, and the push button is used to cycle through colour modes.
 
-\- A button cycles through colour modes
+---
 
-\- Saved positions remain visible while live tracking continues
+## WS2812 Protocol and DWT Timing
 
+The WS2812B LED ring requires very precise timing on its single data line. Initially, SPI was used to try to emulate the required waveform, but this produced unstable colours and incorrect LED behaviour.
 
+The final working implementation used direct GPIO control together with the DWT cycle counter.
 
+### Why the SPI approach failed
 
+The earlier implementation encoded LED bits into SPI patterns. This approach only works if the SPI clock timing matches the WS2812 timing requirements very closely. In practice, the LEDs interpreted some bits incorrectly, causing unstable colours and skipped LEDs.
 
-### Hardware Used
+### Why the DWT approach worked
 
+The final version drove the data pin directly by setting it high and low in software. The DWT cycle counter was used to measure CPU clock cycles accurately.
 
+At 80 MHz:
 
-\- STM32L432 (Nucleo board)
+- 1 clock cycle = 12.5 ns
+- a logic 0 bit is approximately:
+  - high for 0.4 µs
+  - low for 0.85 µs
+- a logic 1 bit is approximately:
+  - high for 0.8 µs
+  - low for 0.45 µs
 
-\- BMI160 accelerometer (I2C)
+Using the DWT cycle counter allowed these timings to be generated accurately, which made the LED ring behave correctly and consistently.
 
-\- WS2812B LED ring (16 LEDs)
+The reset pulse was also implemented properly by holding the line low for more than 50 µs before sending a new LED frame.
 
-\- Potentiometer (ADC input)
+---
 
-\- Push button (GPIO input)
+## Software Development Procedure (LO5)
 
-\- Resistor for LED data line
+The system was developed incrementally, with each subsystem tested before integration.
 
+### Stage 1 – Initial LED Control
 
+The first task was to light a single LED on the WS2812 ring. An SPI-based implementation was used initially.
 
-\---
+**Result:** the LED output was unstable and colours were inconsistent.
 
+### Stage 2 – LED Indexing and Mapping
 
+Specific LEDs were tested individually to verify ring indexing and physical LED order.
 
-### Peripherals Used (LO1)
+**Result:** some LEDs appeared to be skipped and colours were sometimes incorrect, indicating a protocol/timing issue rather than a mapping issue.
 
+### Stage 3 – Protocol Fix
 
+The SPI-based method was removed and replaced with direct GPIO control using the DWT cycle counter.
 
-|**Peripheral**| **Purpose** |
+**Result:** stable WS2812 communication was achieved.
 
-|----------|-----------|
+### Stage 4 – Accelerometer Integration
 
-| GPIO     | L*ED control, button input* |
+The BMI160 accelerometer was connected over I2C and raw acceleration values were read successfully.
 
-| I2C      | *Communication with BMI160* |
+**Result:** acceleration values were printed over UART and changed correctly with board movement.
 
-| ADC      | *Read potentiometer* |
+### Stage 5 – Basic Tilt Detection
 
-| Timer(PWM)| *LED brightness control* |
+The X-axis was first used to implement basic left/right tilt detection by changing LED colour.
 
-| UART     | *Debug output* |
+**Result:** tilt could be detected successfully.
 
+### Stage 6 – Multi-Axis Processing
 
+The Y-axis was added so that forward and backward tilt could also be detected. A dominant-axis method was used to avoid conflicting outputs when tilting diagonally.
 
+**Result:** more complete directional control was achieved.
 
+### Stage 7 – Direction Mapping
 
-### Software Design
+The project was improved from simple colour changes to a directional LED pointer. A 3-LED pointer was used to indicate tilt direction around the ring.
 
+**Result:** the pointer followed the approximate accelerometer direction.
 
+### Stage 8 – Final Optimisation
 
-The software is structured into modular functions:
+A dot-product based direction-matching method and low-pass filtering were added for better direction selection and smoother behaviour.
 
+**Result:** the final system became stable, responsive, and accurate.
 
+---
 
-\- Sensor reading (I2C)
+## Testing and Results (LO4)
 
-\- Signal processing (filtering + mapping)
+Each subsystem was tested independently before full integration.
 
-\- LED control (WS2812 protocol)
+### Test 1 – LED Communication
 
-\- Input handling (button + potentiometer)
+**Method:** LEDs were illuminated sequentially.
 
+**Result:** stable output was achieved after replacing SPI control with direct GPIO timing.
 
+### Test 2 – LED Indexing
 
-A low-level register-based approach was used instead of full HAL abstraction.
+**Method:** each LED was activated individually to verify its position.
 
+**Result:** all LEDs were mapped correctly after protocol timing was fixed.
 
+### Test 3 – I2C Communication
 
+**Method:** accelerometer register values were read and printed via UART.
 
+**Result:** values updated correctly with tilt.
 
-### Software Development Procedure (LO5)
+### Test 4 – Basic Tilt Detection
 
+**Method:** the board was tilted manually left and right.
 
+**Result:** LED output changed correctly according to tilt direction.
 
-The system was developed incrementally, testing each subsystem before integration.
+### Test 5 – Multi-Axis Direction Detection
 
+**Method:** the board was tilted in multiple directions.
 
+**Result:** different directions were successfully distinguished using X and Y axes.
 
-#### Stage 1: WS2812 LED Control
+### Test 6 – Pointer Mapping
 
-Initial implementation used SPI but produced unstable results. This was replaced with direct GPIO control using the DWT cycle counter for precise timing.
+**Method:** the board was rotated through a range of orientations.
 
+**Result:** the 3-LED pointer followed the direction of tilt around the ring.
 
+### Test 7 – Filtering
 
-#### Stage 2: LED Mapping
+**Method:** filtered and unfiltered motion response were compared.
 
-Individual LED control was verified. Issues with indexing and colour inconsistencies were resolved.
+**Result:** filtering reduced jitter and made the pointer movement smoother.
 
+---
 
+## Debugging Methods
 
-#### Stage 3: I2C Sensor Integration
+A combination of software and hardware debugging techniques was used.
 
-The BMI160 was interfaced via I2C. Raw acceleration values were read and scaled correctly.
+### Software Debugging
 
+- UART output was used to print raw and filtered accelerometer values
+- this confirmed correct I2C communication and scaling
+- code was developed in small stages so faults could be isolated more easily
 
+### Ad-hoc Debugging
 
-#### Stage 4: Basic Tilt Detection
+- LEDs were used to visualise different program states
+- individual LED tests were used to verify mapping and indexing
+- subsystem-by-subsystem testing helped isolate problems quickly
 
-Single-axis tilt was mapped to LED colour output to verify system behaviour.
+### Hardware Debugging
 
+- an oscilloscope was used to verify the WS2812 data signal
+- the waveform at the LED data pin was observed to confirm pulse timing and signal presence
+- this helped identify that the original SPI-based communication method was not producing a reliable WS2812 waveform
+- after switching to direct GPIO timing, the oscilloscope confirmed that valid data pulses were present at the LED ring data input
 
+---
 
-#### Stage 5: Multi-Axis Processing
-
-Both X and Y axes were used to detect direction. A dominant-axis method avoided conflicting outputs.
-
-
-
-#### Stage 6: Direction Mapping
-
-Tilt direction was mapped to LED positions using a dot-product method with predefined vectors.
-
-
-
-#### Stage 7: Filtering
-
-A low-pass filter was applied to reduce noise and stabilise the output.
-
-
-
-
-
-### Testing and Results (LO4)
-
-
-
-Each subsystem was tested individually.
-
-
-
-#### Test 1: LED Communication
-
-\- Method: Illuminate LEDs sequentially
-
-\- Result: Stable output achieved after timing correction
-
-
-
-#### Test 2: LED Indexing
-
-\- Method: Activate each LED individually
-
-\- Result: All LEDs correctly mapped
-
-
-
-#### Test 3: I2C Communication
-
-\- Method: Read sensor data via UART
-
-\- Result: Values updated correctly with tilt
-
-
-
-#### Test 4: Tilt Detection
-
-\- Method: Manual tilting
-
-\- Result: Direction correctly reflected in LED output
-
-
-
-#### Test 5: Direction Mapping
-
-\- Method: Rotate device through 360°
-
-\- Result: LED pointer follows direction accurately
-
-
-
-#### Test 6: Filtering
-
-\- Method: Compare filtered vs raw signals
-
-\- Result: Reduced jitter and smoother movement
-
-
-
-
-
-### Debugging Methods
-
-
-
-A combination of debugging techniques was used:
-
-
-
-#### Software Debugging
-
-\- UART was used to print raw and filtered accelerometer values
-
-\- This verified correct I2C communication and data scaling
-
-
-
-#### Ad-hoc Debugging
-
-\- LEDs were used to visualise system state and direction mapping
-
-\- GPIO toggling was used to verify timing accuracy of WS2812 signals
-
-\- Step-by-step subsystem testing was used to isolate faults
-
-
-
-#### Hardware Debugging
-
-
-
-\- An oscilloscope was used to verify the WS2812 data signal
-
-\- The waveform at the data pin was observed to confirm correct pulse timing and signal presence
-
-\- This helped identify issues with the initial communication method and confirmed correct operation after implementing precise timing control
-
-
-
-### Circuit Design
+## Circuit Design
 
 A schematic was created using KiCad.
 
 Connections include:
-- I2C lines (SDA, SCL) to BMI160
-- GPIO output to LED ring data input
-- Potentiometer connected to ADC pin
-- Button connected with pull-up resistor
+
+- I2C lines SDA and SCL connected to the BMI160
+- GPIO output connected to the WS2812B LED ring data input through a 330 Ω resistor
+- potentiometer connected to an ADC input pin
+- push button connected to a GPIO input with pull-up configuration
+- common ground shared between microcontroller, sensor, and LED ring
 
 [View Full Schematic PDF](Circuit_schematic.pdf)
 
 ---
 
-### System Images
+## System Images
 
-#### Working Project
+### Working Project
 ![Working Project](working_project.jpeg)
 
-#### Initial LED Ring Configuration
-![Initial Setup](initial_led_ring_config.jpeg)
+### Initial LED Ring Configuration
+![Initial LED Ring Configuration](initial_led_ring_config.jpeg)
 
-#### LED Colour Configuration
-![LED Colours](led_colour_configuration.jpeg)
+### LED Colour Configuration
+![LED Colour Configuration](led_colour_configuration.jpeg)
 
-#### LED Configuration Mapping
-![LED Mapping](Led_configuration.jpeg)
+### LED Configuration
+![LED Configuration](Led_configuration.jpeg)
 
-#### Debugging WS2812 Signal (Oscilloscope)
+### Incorrect Protocol Debugging
+![Incorrect Protocol Debugging](Led_incorrect_protocol_debuging.jpeg)
+
+### Oscilloscope Debug of Data Pulse
 ![Oscilloscope Debug](Hardware_debug_datapulsefor_ledring.jpeg)
 
-#### Incorrect Protocol Debugging
-![Protocol Debug](Led_incorrect_protocol_debuging.jpeg)
+---
 
-### Results Summary
+## Development Log
 
+A more detailed record of code development, debugging, and testing is available here:
 
+[View Full Development Log](Development_Log.docx)
+
+---
+
+## Code Evolution Summary
+
+The code evolved through several important versions:
+
+- **Version 1:** initial SPI-based WS2812 LED control
+- **Version 2:** individual LED addressing and LED mapping tests
+- **Version 3:** direct GPIO-based WS2812 implementation using DWT timing
+- **Version 4:** I2C communication with BMI160 and UART debug output
+- **Version 5:** basic X-axis tilt detection with colour-based output
+- **Version 6:** X and Y axis tilt handling with dominant-axis logic
+- **Version 7:** angle-based direction pointer
+- **Version 8:** filtered direction mapping with improved stability and final system behaviour
+
+This development process showed the progression from early proof-of-concept code to a stable final implementation.
+
+---
+
+## Results Summary
 
 The final system:
 
-\- Accurately detects tilt direction
+- accurately detects tilt direction
+- displays direction using a 3-LED pointer on the WS2812 ring
+- provides stable output using filtering and a dead zone
+- allows user interaction through a button and potentiometer
+- demonstrates successful integration of multiple embedded peripherals
 
-\- Displays direction using LED ring
+The final system is responsive, stable, and meets the original project objectives.
 
-\- Provides stable output using filtering
+---
 
-\- Allows user interaction via button and potentiometer
+## Video Demonstration
 
-
-
-The system is responsive, stable, and meets all project objectives.
-
-
-
-#### Video Demonstration
-
-
-
-https://youtu.be/A2sVNCb3\_ys
-
+[Watch the demo video on YouTube](https://youtu.be/A2sVNCb3_ys)
