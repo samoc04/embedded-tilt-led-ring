@@ -286,31 +286,37 @@ A combination of debugging techniques was used:
 
 ### Circuit Design
 
-
-
 A schematic was created using KiCad.
 
-
-
 Connections include:
+- I2C lines (SDA, SCL) to BMI160
+- GPIO output to LED ring data input
+- Potentiometer connected to ADC pin
+- Button connected with pull-up resistor
 
-\- I2C lines (SDA, SCL) to BMI160
+[View Full Schematic PDF](Circuit_schematic.pdf)
 
-\- GPIO output to LED ring data input
+---
 
-\- Potentiometer connected to ADC pin
+### System Images
 
-\- Button connected with pull-up resistor
+#### Working Project
+![Working Project](working_project.jpeg)
 
+#### Initial LED Ring Configuration
+![Initial Setup](initial_led_ring_config.jpeg)
 
+#### LED Colour Configuration
+![LED Colours](led_colour_configuration.jpeg)
 
+#### LED Configuration Mapping
+![LED Mapping](Led_configuration.jpeg)
 
+#### Debugging WS2812 Signal (Oscilloscope)
+![Oscilloscope Debug](Hardware_debug_datapulsefor_ledring.jpeg)
 
-
-
-\[View Schematic PDF](Circuit\_schematic.pdf)
-
-
+#### Incorrect Protocol Debugging
+![Protocol Debug](Led_incorrect_protocol_debuging.jpeg)
 
 ### Results Summary
 
