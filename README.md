@@ -66,8 +66,6 @@ Key features:
 
 
 
-\---
-
 
 
 ### Hardware Used
@@ -96,23 +94,21 @@ Key features:
 
 
 
-| Peripheral | Purpose |
+|**Peripheral**| **Purpose** |
 
-|----------|--------|
+|----------|-----------|
 
-| GPIO | LED control, button input |
+| GPIO     | L*ED control, button input* |
 
-| I2C | Communication with BMI160 |
+| I2C      | *Communication with BMI160* |
 
-| ADC | Read potentiometer |
+| ADC      | *Read potentiometer* |
 
-| Timer (PWM) | LED brightness control |
+| Timer(PWM)| *LED brightness control* |
 
-| UART | Debug output |
+| UART     | *Debug output* |
 
 
-
-\---
 
 
 
@@ -137,8 +133,6 @@ The software is structured into modular functions:
 A low-level register-based approach was used instead of full HAL abstraction.
 
 
-
-\---
 
 
 
@@ -191,8 +185,6 @@ Tilt direction was mapped to LED positions using a dot-product method with prede
 A low-pass filter was applied to reduce noise and stabilise the output.
 
 
-
-\---
 
 
 
@@ -251,8 +243,6 @@ Each subsystem was tested individually.
 \- Result: Reduced jitter and smoother movement
 
 
-
-\---
 
 
 
@@ -314,7 +304,11 @@ Connections include:
 
 
 
-\[View Schematic PDF](Circuit\_schematic.pdf)
+
+
+
+
+\[View Schematic PDF](Circuit schematic.pdf)
 
 
 
@@ -338,10 +332,6 @@ The system is responsive, stable, and meets all project objectives.
 
 
 
-\---
-
-
-
 #### Video Demonstration
 
 
@@ -349,8 +339,6 @@ The system is responsive, stable, and meets all project objectives.
 https://youtu.be/A2sVNCb3\_ys
 
 
-
-\---
 
 
 
