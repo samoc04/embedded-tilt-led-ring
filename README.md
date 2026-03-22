@@ -308,7 +308,7 @@ Connections include:
 
 
 
-\[View Schematic PDF](Circuit\_schematic.pdf)
+\[View Schematic PDF](https://github.com/samoc04/embedded-tilt-led-ring/blob/main/Circuit%20schematic.pdf)
 
 
 
